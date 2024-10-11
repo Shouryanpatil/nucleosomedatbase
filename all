@@ -1,0 +1,282 @@
+#about.php
+<?php include 'header.php'; ?>
+<h2>About Us</h2>
+<p>This website aims to provide comprehensive resources related to nucleotide sequences.</p>
+<?php include 'footer.php'; ?>
+
+
+
+#contact.php
+<?php include 'header.php'; ?>
+<h2>Contact Us</h2>
+<p>If you have any questions, please contact us at <a href="mailto:info@example.com">info@example.com</a>.</p>
+<?php include 'footer.php'; ?>
+
+#footer.php
+</main>
+<footer>
+    <p>&copy; 2024 Nucleotide Sequences Database</p>
+</footer>
+</body>
+</html>
+
+
+
+#header.php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nucleotide Sequences</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Nucleotide Sequences Database</h1>
+    <nav>
+        <a href="index.php">Home</a>
+        <a href="about.php">About</a>
+        <a href="search.php">Search</a>
+        <a href="contact.php">Contact</a>
+        <a href="help.php">Help</a>
+    </nav>
+</header>
+<main>
+
+
+
+#help.php
+<?php include 'header.php'; ?>
+<h2>Help</h2>
+<p>For assistance, refer to our FAQs or contact support.</p>
+<?php include 'footer.php'; ?>
+
+
+
+#index.php
+<?php include 'header.php'; ?>
+<h2>Welcome to Nucleotide Sequences</h2>
+<p>This website provides tools and information about nucleotide sequences.</p>
+<?php include 'footer.php'; ?>
+
+
+
+#process.php
+<?php
+// process.php
+
+// Check if the search form is submitted
+if (isset($_POST['search'])) {
+    $searchTerm = $_POST['searchTerm'];
+    $data = [];
+    
+    // Open the CSV file
+    if (($handle = fopen("sequences.csv", "r")) !== FALSE) {
+        // Get the header row
+        $headers = fgetcsv($handle);
+        
+        // Read the data rows
+        while (($row = fgetcsv($handle)) !== FALSE) {
+            // Create an associative array for each row
+            $data[] = array_combine($headers, $row);
+        }
+        fclose($handle);
+    }
+    
+    // Filter results based on search term (case-insensitive)
+    $filteredResults = array_filter($data, function($row) use ($searchTerm) {
+        return stripos($row['ACCESSION ID'], $searchTerm) !== FALSE || 
+               stripos($row['SOURCE ORGANISM'], $searchTerm) !== FALSE;
+    });
+    
+    // Display results
+    if (!empty($filteredResults)) {
+        foreach ($filteredResults as $result) {
+            echo "<div>";
+            echo "<p><strong>Accession ID:</strong> {$result['ACCESSION ID']}</p>";
+            echo "<p><strong>Source Organism:</strong> {$result['SOURCE ORGANISM']}</p>";
+            echo "<p><strong>Length:</strong> {$result['LENGTH']}</p>";
+            echo "<p><strong>Mol-Type:</strong> {$result['MOL-TYPE']}</p>";
+            echo "<p><strong>Topology:</strong> {$result['TOPOLOGY']}</p>";
+            echo "<p><strong>Division:</strong> {$result['DIVISION']}</p>";
+            echo "<p><strong>Sequence:</strong><br>{$result['SEQUENCE IN FASTA']}</p>";
+            echo "</div><hr>";
+        }
+    } else {
+        echo "<p>No results found for '{$searchTerm}'.</p>";
+    }
+} else {
+    echo "<p>No search term provided.</p>";
+}
+?>
+
+<?php
+// process.php
+
+// Initialize data array
+$data = [];
+
+// Open the CSV file
+if (($handle = fopen("sequences.csv", "r")) !== FALSE) {
+    // Get the header row
+    $headers = fgetcsv($handle);
+    
+    // Read the data rows
+    while (($row = fgetcsv($handle)) !== FALSE) {
+        // Create an associative array for each row
+        $data[] = array_combine($headers, $row);
+    }
+    fclose($handle);
+}
+
+
+
+#search.php
+<?php include 'header.php'; ?>
+<h2>Search Nucleotide Sequences</h2>
+<form action="process.php" method="post">
+    <label for="searchTerm">Search:</label>
+    <input type="text" id="searchTerm" name="searchTerm">
+    <input type="submit" name="search" value="Search">
+</form>
+<?php include 'footer.php'; ?>
+
+
+
+#sequences.csv
+DATABASE ID,ACCESSION ID,SOURCE ORGANISM,LENGTH,MOL-TYPE,TOPOLOGY,DIVISION,SEQUENCE IN FASTA
+
+
+
+
+#style.css
+/* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+    background-color: #f0f0f5;
+    padding: 20px;
+}
+
+/* Header section */
+header {
+    background-color: #283593;
+    color: white;
+    text-align: center;
+    padding: 30px 0;
+    border-radius: 0 0 0px 0px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 2em;
+    letter-spacing: 2px;
+}
+
+/* Navigation styling */
+nav {
+    margin: 10px 0;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    font-size: 1.2em;
+    margin: 0 15px;
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: #3949ab;
+    border-radius: 50px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+nav a:hover {
+    background-color: #1e88e5;
+    transform: scale(1.1);
+}
+
+/* Main content */
+main {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+main h2 {
+    font-size: 2.5em;
+    color: #283593;
+    margin-bottom: 20px;
+}
+
+main p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* Button styling */
+button {
+    background-color: #1e88e5;
+    color: white;
+    font-size: 0.5em;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+    background-color: #1565c0;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Footer styling */
+footer {
+    color: rgb(17, 2, 2);
+    padding: 20px;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    margin-top: 40px;
+}
+
+footer p {
+    font-size: 1.1em;
+}
+
+/* Adding responsiveness for smaller devices */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2em;
+    }
+
+    nav a {
+        font-size: 1em;
+        padding: 8px 15px;
+    }
+
+    main h2 {
+        font-size: 2em;
+    }
+
+    button {
+        font-size: 1em;
+        padding: 8px 20px;
+    }
+}
+
+
